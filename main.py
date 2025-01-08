@@ -38,7 +38,7 @@ class ResponseData(BaseModel):
 
 @app.get("/news")
 async def read_news():
-        shopping_news: ResponseData = newsapi.get_everything(q="shopping", language='en')
+        shopping_news: ResponseData = newsapi.get_everything(q="shopping", language='en', page=1, page_size=30)
         return {"data": shopping_news}
 
 
