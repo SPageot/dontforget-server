@@ -1,47 +1,21 @@
 from fastapi import FastAPI
-from newsapi import NewsApiClient
-from pydantic import BaseModel
-from typing import Optional
-from dotenv import load_dotenv
-import os
+from dotenv import load_dotenv  
+from endpoints import api_router 
+from slowapi import  _rate_limit_exceeded_handler
+from slowapi.middleware import SlowAPIMiddleware 
+from slowapi.errors import RateLimitExceeded
+from security.rate_limiter import limiter
 
 load_dotenv()
 
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-
-newsapi = NewsApiClient(api_key=NEWS_API_KEY)
-
-app = FastAPI()
-
-class Source(BaseModel):
-      id: Optional[int] = None
-      name: str
-
-class Article(BaseModel):
-      source: Source
-      author: str
-      title: str
-      description:str
-      url: str
-      urlToImage: str
-      publishedAt: str
-      content: str
-
-class News(BaseModel):
-    status:str
-    totalResults:int
-    articles: list[Article]
-
-class ResponseData(BaseModel):
-      data:News
 
 
-@app.get("/news")
-async def read_news():
-        shopping_news: ResponseData = newsapi.get_everything(q="shopping", language='en', page=1, page_size=30)
-        return {"data": shopping_news}
+app = FastAPI(title="Dont Forget Server", description="API for Dont Forget Client", version="1.0.0")
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
+app.add_exception_handler(RateLimitExceeded,_rate_limit_exceeded_handler)
+
+app.include_router(api_router)
 
 
-@app.get("/feeds")
-def read_feeds():
-    return "hi"
+
