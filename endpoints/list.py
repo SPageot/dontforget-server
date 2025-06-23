@@ -16,7 +16,6 @@ router = APIRouter()
 
 async def checkIfPasskeyExists(passkey):
         list = collection.find_one({"passkey":passkey})
-        print(list)
         if list is None:
                 return False
         else:
