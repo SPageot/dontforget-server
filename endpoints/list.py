@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from model.model import UserList
-from pymongo import collection, MongoClient
+from pymongo.mongo_client import MongoClient
 from security.rate_limiter import limiter
 import os
 
@@ -13,6 +13,14 @@ db = client['DontForget']
 collection = db['lists']
 
 router = APIRouter()
+
+async def checkIfPasskeyExists(passkey):
+        list = collection.find_one({"passkey":passkey})
+        print(list)
+        if list is None:
+                return False
+        else:
+                return True
 
 @router.post("/get-list")
 @limiter.limit("5/minute")
@@ -41,8 +49,13 @@ async def update_list(request:Request):
 async def add_to_list(request:Request):
                 try:
                     item_list = await request.json()
-                    result = collection.insert_one(dict(item_list)) 
-                    return {"status_code":200, "id":str(result.inserted_id)}
-                except:
-                    raise HTTPException(status_code=500, detail="Something went wrong!")            
+                    doesPassKeyExist = await checkIfPasskeyExists(item_list['passkey'])
+                    if doesPassKeyExist is not True:
+                        result = collection.insert_one(item_list) 
+                        return {"status_code":200, "id":str(result.inserted_id)}
+                    else:
+                        raise HTTPException(status_code=400, detail="Passkey already taken")
+                except Exception as e:
+                    print(e)
+                    raise HTTPException(status_code=500, detail=f"Error: {e}")            
             
