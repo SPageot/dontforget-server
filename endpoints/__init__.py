@@ -1,5 +1,3 @@
-from endpoints import list, news
+from endpoints import list
 
 api_router = list.router
-
-api_router.include_router(news.router)
