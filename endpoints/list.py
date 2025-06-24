@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException, Request
 from model.model import UserList
 from pymongo.mongo_client import MongoClient
 from security.rate_limiter import limiter
+from dotenv import load_dotenv
 import os
+load_dotenv()
 
 MONGO_DB_URI = os.getenv("MONGO_DB_URI")
 
@@ -28,7 +30,7 @@ async def read_list(request:Request):
             return {"message": "Online"}
 
 @router.post("/get-list")
-@limiter.limit("5/minute")
+@limiter.limit("50/minute")
 async def read_list(request:Request):
             passkey = await request.json()
             list = collection.find_one({"passkey":passkey["passkey"]})
@@ -38,7 +40,7 @@ async def read_list(request:Request):
 
 
 @router.put("/update-list")
-@limiter.limit("5/minute")
+@limiter.limit("50/minute")
 async def update_list(request:Request):
             try:
                 update_list = await request.json()
@@ -50,7 +52,7 @@ async def update_list(request:Request):
 
 
 @router.post("/list")
-@limiter.limit("5/minute")
+@limiter.limit("50/minute")
 async def add_to_list(request:Request):
                 try:
                     item_list = await request.json()
