@@ -20,6 +20,12 @@ async def checkIfPasskeyExists(passkey):
                 return False
         else:
                 return True
+        
+
+@router.get("/")
+@limiter.limit("5/minute")
+async def read_list(request:Request):
+            return {"message": "Online"}
 
 @router.post("/get-list")
 @limiter.limit("5/minute")
