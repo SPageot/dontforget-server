@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const listSchema = mongoose.Schema({
   userId: String,
@@ -10,4 +10,4 @@ const listSchema = mongoose.Schema({
   },
 });
 
-export default mongoose.model("List", listSchema);
+export default mongoose.model('List', listSchema);
