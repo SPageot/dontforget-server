@@ -3,10 +3,20 @@ import List from "../schema/listSchema.js";
 
 const router = express.Router();
 
+router.get("/userList/:id", async (req, res) => {
+  try {
+    const listId = req.params.id;
+    const userList = await List.findOne({ _id: listId });
+    return res.send(userList);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
 router.get("/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
-    const userList = await List.findOne({ userId });
+    const userList = await List.find({ userId });
     return res.send(userList);
   } catch (err) {
     return res.status(500).send(err.message);
