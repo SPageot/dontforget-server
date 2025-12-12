@@ -51,11 +51,15 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { password, username } = req.body;
+    if(!password){
+      throw new Error("Password is required")
+    }
     const user = await User.findOne({ username });
     if (!user) {
       throw new Error("Username not found! Register");
     }
-    const match = bcrypt.compare(password, user.password);
+
+    const match =  await bcrypt.compare(password, user.password);
 
     if (!match) {
       throw new Error("Password does not match!");
