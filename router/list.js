@@ -57,10 +57,12 @@ router.put("/:listId", async (req, res) => {
 router.delete("/:listId", async (req, res) => {
   try {
     const listId = req.params.listId;
-    console.log(listId);
-    const list = await List.findByIdAndDelete({ _id: listId });
-    console.log(list);
+    const list = await List.findByIdAndDelete({ _id: listId })
+    if(list){
     return res.status(201).send({ message: "List Successfully deleted" });
+    }else{
+      throw new Error("Error deleting list")
+    }
   } catch (err) {
     return res.status(500).send(err.message);
   }
