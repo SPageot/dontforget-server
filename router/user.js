@@ -18,7 +18,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//TODO: add utility functions for error handling amd hashing
 router.post("/register", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
